@@ -156,11 +156,15 @@ const Resultados: React.FC = () => {
               />
               <YAxis />
               <YAxis yAxisId="right" orientation="right" stroke="#ef4444" />
-              <Tooltip />
+              <Tooltip
+                formatter={(value: any) =>
+                  typeof value === "number" ? value.toFixed(2) : value
+                }
+              />
               <Legend
                 verticalAlign="top"
                 align="center"
-                wrapperStyle={{ marginTop: -10, marginBottom: 30 }}
+                wrapperStyle={{ marginTop: -20, marginBottom: 30, marginLeft: 10 }}
               />
 
               <Bar dataKey="Aplicativo" fill="#60a5fa">
