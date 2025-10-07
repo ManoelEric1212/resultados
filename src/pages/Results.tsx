@@ -62,7 +62,6 @@ const Resultados: React.FC = () => {
       const id = 'f610517a-075c-464c-8349-4abcd1bf9035'
       const data = await buscaConferencias(id);
       const filtroConferenciasFinalizada = data.filter((i) => i.status == 'FINALIZADA')
-      toast.success('Conferências buscadas');
       setConferencias(filtroConferenciasFinalizada);
       setSelecionadas(filtroConferenciasFinalizada.map((c) => c.id));
 
