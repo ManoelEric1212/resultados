@@ -1,0 +1,9 @@
+services:
+  resultados:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: resultados-app
+    ports:
+      - "3000:80"
+    restart: unless-stopped
