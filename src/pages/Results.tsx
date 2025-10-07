@@ -12,7 +12,7 @@ import {
   CartesianGrid,
   Line,
 } from "recharts";
-import { Home } from "lucide-react";
+import { Clock, Home, Percent } from "lucide-react";
 import { buscaConferencias, type getConferenciaProps } from "../service/Conferencias/conferenciaService";
 import { toast } from "react-toastify";
 import GlobalLoading from "../components/Loading";
@@ -55,6 +55,7 @@ const Resultados: React.FC = () => {
       Reducao: d.Manual - d.Aplicativo,
     };
   });
+  console.log('tempoData', tempoData)
 
   const buscaTodasConferencias = async () => {
     setLoading(true)
@@ -75,7 +76,7 @@ const Resultados: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
-    handleResize(); // define valor inicial
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -199,6 +200,35 @@ const Resultados: React.FC = () => {
           <p className="text-gray-500">Selecione uma conferência acima</p>
         )}
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+
+        <div className="bg-white rounded-2xl shadow p-4 flex items-center gap-3">
+          <Clock className="text-green-600 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex-shrink-0" />
+          <div>
+            <h4 className="text-xs sm:text-sm md:text-base text-gray-500">
+              Ganho médio de tempo
+            </h4>
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-green-700">
+              12,5 min
+            </p>
+          </div>
+        </div>
+
+
+        <div className="bg-white rounded-2xl shadow p-4 flex items-center gap-3">
+          <Percent className="text-blue-600 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 flex-shrink-0" />
+          <div>
+            <h4 className="text-xs sm:text-sm md:text-base text-gray-500">
+              Redução percentual média
+            </h4>
+            <p className="text-lg sm:text-xl md:text-2xl font-bold text-blue-700">
+              39,1%
+            </p>
+          </div>
+        </div>
+      </div>
+
 
       <GlobalLoading isLoading={loading} />
     </div>
