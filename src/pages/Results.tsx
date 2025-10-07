@@ -19,14 +19,14 @@ import GlobalLoading from "../components/Loading";
 
 
 
-
-
-
 const Resultados: React.FC = () => {
   const [selecionadas, setSelecionadas] = useState<string[]>([]);
   const [conferencias2, setConferencias] = useState<getConferenciaProps[]>([])
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleSelecionada = (id: string) => {
     setSelecionadas((prev) =>
@@ -73,6 +73,14 @@ const Resultados: React.FC = () => {
     }
   }
 
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize(); // define valor inicial
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     buscaTodasConferencias()
   }, [])
@@ -97,9 +105,12 @@ const Resultados: React.FC = () => {
               <div className="p-3 bg-gray-100 rounded-full">
                 <Home className="w-6 h-6" />
               </div>
-              <div>
-                <h2 className="text-lg font-semibold">{conf.ambiente}</h2>
-                <p className="text-sm text-gray-500">
+              <div className="flex-1 min-w-0">
+                {/* Ajuste de fonte e quebra de linha */}
+                <h2 className="text-base sm:text-lg font-semibold break-words truncate">
+                  {conf.ambiente}
+                </h2>
+                <p className="text-sm text-gray-500 break-words truncate">
                   Código: {conf.endereco}
                 </p>
               </div>
@@ -113,52 +124,80 @@ const Resultados: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="bg-white border-amber-50 rounded-lg shadow-lg p-6">
+
+      <div className="bg-white border-amber-50 rounded-lg shadow-lg p-4 sm:p-6 overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4">Comparativo de Tempo (min)</h2>
+
         {tempoData.length > 0 ? (
-          <>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={tempoData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="conferencia" />
+          // <div style={{ minWidth: tempoData.length * 120 }}>
+          <ResponsiveContainer width="100%" height={450} >
+            <ComposedChart
+              data={tempoData}
+              margin={{ top: 20, right: -20, left: -30, bottom: 60 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="conferencia"
+                interval={0} // mostra todos os rótulos
+                tick={({ x, y, payload }) => {
+                  const text = payload.value.length > 12 ? payload.value.slice(0, 12) + "…" : payload.value;
+                  return (
+                    <text
+                      x={x}
+                      y={y + 15}
+                      textAnchor="end"
+                      transform={`rotate(-45, ${x}, ${y + 15})`}
+                      fill="#333"
+                      fontSize={12}
+                    >
+                      {text}
+                    </text>
+                  );
+                }}
+              />
+              <YAxis />
+              <YAxis yAxisId="right" orientation="right" stroke="#ef4444" />
+              <Tooltip />
+              <Legend
+                verticalAlign="top" // ou 'bottom', dependendo de onde está
+                align="center"
+                wrapperStyle={{ marginTop: -10, marginBottom: 30 }} // margem entre legenda e gráfico
+              />
 
-                <YAxis />
+              <Bar dataKey="Aplicativo" fill="#60a5fa">
+                <LabelList dataKey="Aplicativo" position="top" />
+              </Bar>
+              <Bar dataKey="Manual" fill="#1e3a8a">
+                <LabelList dataKey="Manual" position="top" />
+              </Bar>
 
-                <YAxis yAxisId="right" orientation="right" stroke="#ef4444" />
-
-                <Tooltip />
-                <Legend />
-
-                <Bar dataKey="Aplicativo" fill="#60a5fa">
-                  <LabelList dataKey="Aplicativo" position="top" />
-                </Bar>
-                <Bar dataKey="Manual" fill="#1e3a8a">
-                  <LabelList dataKey="Manual" position="top" />
-                </Bar>
-
-                <Line
-                  type="monotone"
-                  dataKey="Reducao"
-                  stroke="#ef4444"
-                  yAxisId="right"
-                  name="Redução de Tempo"
-                  strokeWidth={2}
-                >
-                  <LabelList dataKey="Reducao" position="bottom" fill="#ef4444" formatter={(value) => {
-                    if (typeof value === 'number') {
-                      return value.toFixed(1);
+              <Line
+                type="monotone"
+                dataKey="Reducao"
+                stroke="#ef4444"
+                yAxisId="right"
+                name="Redução de Tempo"
+                strokeWidth={2}
+              >
+                {!isMobile && (
+                  <LabelList
+                    dataKey="Reducao"
+                    position="bottom"
+                    fill="#ef4444"
+                    formatter={(value) =>
+                      typeof value === "number" ? value.toFixed(1) : String(value)
                     }
-                    return String(value);
-                  }} />
-                </Line>
-
-              </ComposedChart>
-            </ResponsiveContainer>
-          </>
+                  />
+                )}
+              </Line>
+            </ComposedChart>
+          </ResponsiveContainer>
+          // </div>
         ) : (
           <p className="text-gray-500">Selecione uma conferência acima</p>
         )}
       </div>
+
       <GlobalLoading isLoading={loading} />
     </div>
   );
