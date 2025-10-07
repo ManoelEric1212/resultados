@@ -129,7 +129,6 @@ const Resultados: React.FC = () => {
         <h2 className="text-xl font-semibold mb-4">Comparativo de Tempo (min)</h2>
 
         {tempoData.length > 0 ? (
-          // <div style={{ minWidth: tempoData.length * 120 }}>
           <ResponsiveContainer width="100%" height={450} >
             <ComposedChart
               data={tempoData}
@@ -159,9 +158,9 @@ const Resultados: React.FC = () => {
               <YAxis yAxisId="right" orientation="right" stroke="#ef4444" />
               <Tooltip />
               <Legend
-                verticalAlign="top" // ou 'bottom', dependendo de onde está
+                verticalAlign="top"
                 align="center"
-                wrapperStyle={{ marginTop: -10, marginBottom: 30 }} // margem entre legenda e gráfico
+                wrapperStyle={{ marginTop: -10, marginBottom: 30 }}
               />
 
               <Bar dataKey="Aplicativo" fill="#60a5fa">
